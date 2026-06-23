@@ -19,7 +19,8 @@ export default{
         return {
             formdata : {
                 email:"",
-                pass:""
+                pass:"",
+                name : "himanshu"
             }
         }
     },
