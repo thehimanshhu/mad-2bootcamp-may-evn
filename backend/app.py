@@ -1,6 +1,7 @@
 from flask import Flask
 from application.models import db,User,Role
 from flask_security import Security, SQLAlchemyUserDatastore
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__)
@@ -8,6 +9,7 @@ def create_app():
     app.config["SECRET_KEY"] = "mysecretkey"
     app.config["SECURITY_TOKEN_AUTHENTICATION_HEADER"] = "Authentication-Token"
     db.init_app(app)
+    CORS(app)
     ds = SQLAlchemyUserDatastore(db, User, Role )
     app.security=Security(app ,datastore=ds , register_blueprint= False)
 
@@ -21,6 +23,7 @@ def create_app():
     
     app.app_context().push()
     return app
+
 
 app = create_app()
 

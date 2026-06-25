@@ -22,9 +22,40 @@ def login():
     else:
         return {"message" : "Email doesn't exist"} , 404
 
+
+@app.route("/register" , methods=["POST"]) 
+def register():
+    email = request.json.get("email")
+    pwd = request.json.get("password")
+    role = request.json.get("role")
+    print(role)
+    name = request.json.get("name") 
+    ds = app.security.datastore
+    
+    if not ds.find_user(email = email):
+        
+        if role == "customer": 
+            ds.create_user(email = email , password = pwd, name= name , active= "active" , roles=["customer"])
+            db.session.commit()
+            return {"message" : "Account created Successfully"} , 200
+        elif role == "professional": 
+            ds.create_user(email = email , password = pwd, name= name , active= "active" , roles=["professional"])
+            db.session.commit()
+            return {"message" : "Account created Successfully"} , 200  
+        else :
+            
+            return {"message" : "Role not Allowed"} , 400
+    else:
+        
+        return { "message" : "Email Already Exists"} , 409
         
 @app.route("/admin/dashboard", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
 def admin_dashboard():
-    return "Welcome to admin dashboard"
+    return {"message" : "welcome to admin dashboard"}
+
+
+@app.route("/prof-greet", methods=["GET"])
+def prof_dashboard():
+    return {"message" : "welcome to Prof dashboard"}
