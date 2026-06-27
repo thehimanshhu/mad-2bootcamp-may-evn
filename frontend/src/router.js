@@ -5,6 +5,8 @@ import Register from "./components/Register.vue"
 import AdminDashboard from "./components/Admin/Dashboard.vue"
 import ProfDashboard from "./components/Professional/Dashboard.vue"
 import CustDashboard from "./components/Customer/Dashboard.vue"
+import CreatePackage from "./components/Professional/CreatePackage.vue"
+import ViewPackage from "./components/Professional/ViewPackage.vue"
 
 const routes = [
     {
@@ -24,6 +26,12 @@ const routes = [
     },
     {
         "path": "/customer/dashboard", component: CustDashboard
+    },
+    {
+        "path": "/create-package", component: CreatePackage
+    },
+    {
+        "path": "/view-package/:pack_id", component: ViewPackage
     },
 
 ]

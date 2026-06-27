@@ -19,10 +19,10 @@ with app.app_context():
         ds.create_user(name="prof2" , email="prof2@gmail.com" , password = "pass" , roles=["professional"  ])
         db.session.commit()
     if not ds.find_user(email="cust1@gmail.com"):
-        ds.create_user(name="cust1" , email="cust1@gmail.com" , password = "pass" , roles=["professional"  ])
+        ds.create_user(name="cust1" , email="cust1@gmail.com" , password = "pass" , roles=["customer"  ])
         db.session.commit()
     if not ds.find_user(email="cust2@gmail.com"):
-        ds.create_user(name="cust2" , email="cust2@gmail.com" , password = "pass" , roles=["professional"  ])
+        ds.create_user(name="cust2" , email="cust2@gmail.com" , password = "pass" , roles=["customer"  ])
         db.session.commit()
 
     if Package.query.count() == 0:

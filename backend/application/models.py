@@ -8,7 +8,7 @@ class User(db.Model,UserMixin):
     name = db.Column(db.String , nullable = False)
     email = db.Column(db.String , unique = True ,  nullable = False)
     password = db.Column(db.String , nullable = False)
-    roles = db.relationship("Role" ,secondary="user_roles")
+    roles = db.relationship("Role" ,secondary="user_roles" , backref="bearers")
     fs_uniquifier = db.Column(db.String, nullable=False)
     active=db.Column(db.String,nullable=False)
     created_bookings = db.relationship("Booking" , foreign_keys="Booking.customer_id" ,backref ="customer")
