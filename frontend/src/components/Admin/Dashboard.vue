@@ -20,7 +20,9 @@
 
                         <td>{{ prof.name }}</td>
                         <td>{{ prof.email }}</td>
-                        <td></td>
+                        <td>
+                            <router-link :to="`/view-professional/${prof.id}`" class="btn btn-primary">View</router-link>
+                        </td>
                     </tr>
 
 

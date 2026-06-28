@@ -7,6 +7,9 @@ import ProfDashboard from "./components/Professional/Dashboard.vue"
 import CustDashboard from "./components/Customer/Dashboard.vue"
 import CreatePackage from "./components/Professional/CreatePackage.vue"
 import ViewPackage from "./components/Professional/ViewPackage.vue"
+import ViewProfessional from "./components/Admin/ViewProfessional.vue"
+import BookPackage from "./components/Customer/BookPackage.vue"
+import Search from "./components/Admin/Search.vue"
 
 const routes = [
     {
@@ -32,6 +35,15 @@ const routes = [
     },
     {
         "path": "/view-package/:pack_id", component: ViewPackage
+    },
+    {
+        "path": "/view-professional/:prof_id", component: ViewProfessional
+    },
+    {
+        "path": "/book-package/:pack_id", component: BookPackage
+    },
+    {
+        "path": "/search", component: Search
     },
 
 ]

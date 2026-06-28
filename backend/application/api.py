@@ -128,3 +128,86 @@ def get_package():
         return package , 200
     else :
         return {"message":"Package Not found"},404
+
+@app.route("/get-professional" , methods=["GET"])
+@auth_required("token")
+def get_professional():
+    prof_id = request.args.get("prof_id")
+    prof = User.query.filter_by(id = prof_id).first()
+    if prof:
+        professional = {}
+        professional["name"] = prof.name
+        professional["email"] = prof.email
+        professional["packages"] = []
+        for pack in prof.packages:
+            professional["packages"].append( {"id" : pack.id , "name" :pack.name , "price":pack.price})
+
+        return professional , 200
+    else :
+        return {"message":"Professional Not found"},404
+    
+
+
+
+@app.route("/get-packages" , methods=["GET"])
+@auth_required("token")
+def get_packages():
+    pack_id = request.args.get("pack_id")
+    packs = Package.query.all()
+    packages  = []
+    for pack in packs:
+        packages.append({"id" : pack.id , "name" : pack.name , "price" : pack.price})
+    return packages,200
+
+
+@app.route("/book-package" , methods=["POST"])
+@auth_required("token")
+def book_package():
+    p_id = request.args.get("pack_id")
+    date = request.json.get("date")
+    time = request.json.get("time")
+    pack = Package.query.filter_by(id = p_id).first()
+    if pack:
+        new_booking = Booking(date = datetime.strptime(date  , "%Y-%m-%d").date() ,
+                              time = datetime.strptime(time, "%H:%M").time() ,
+                              customer_id = current_user.id , professional_id = pack.professional.id,
+                              package_id = pack.id)
+        db.session.add(new_booking)
+        db.session.commit()
+        return {"message" : "Booking Created Succesfully"} , 200
+    else : 
+        return {"message" : "Package Doesn't exist"} , 404
+    
+
+@app.route("/get-bookings" , methods=["GET"]) 
+@auth_required("token")
+def get_bookings():
+    bookings = Booking.query.filter_by(customer_id = current_user.id).all()
+    books = []
+    for book in bookings : 
+        books.append({"id" :book.id , "prof_name" : book.professional.name , 
+                      "prof_email" : book.professional.email , 
+                      "date" : datetime.strftime(book.date , "%d-%m-%Y" ) , 
+                        "time" : book.time.strftime("%H:%M") , 
+                           "package_name"  :book.package.name })
+    return books,200
+
+
+@app.route("/search" , methods=["POST"])
+def search():
+    q_type = request.json.get("query_type")
+    query  = request.json.get("query")
+    if q_type== "prof":
+        prof_role = Role.query.filter_by(name = "professional").first()
+        profs = []
+        for prof in prof_role.bearers:
+            if query in prof.name.lower()  or query in prof.email.lower():
+                profs.append({ "id" : prof.id , "name" : prof.name , "email" : prof.email})
+        return profs , 200
+    if q_type== "cust":
+        cust_role = Role.query.filter_by(name = "customer").first()
+        custs = []
+        for cust in cust_role.bearers:
+            if query in cust.name.lower()  or query in cust.email.lower():
+                custs.append({ "id" : cust.id , "name" : cust.name , "email" : cust.email})
+        return custs , 200

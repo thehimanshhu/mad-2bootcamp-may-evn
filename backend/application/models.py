@@ -11,6 +11,7 @@ class User(db.Model,UserMixin):
     roles = db.relationship("Role" ,secondary="user_roles" , backref="bearers")
     fs_uniquifier = db.Column(db.String, nullable=False)
     active=db.Column(db.String,nullable=False)
+    packages = db.relationship("Package" , backref="professional")
     created_bookings = db.relationship("Booking" , foreign_keys="Booking.customer_id" ,backref ="customer")
     recived_bookings = db.relationship("Booking" , foreign_keys="Booking.professional_id" ,backref ="professional")
     
