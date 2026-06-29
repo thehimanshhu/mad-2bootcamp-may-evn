@@ -2,7 +2,7 @@ from flask import Flask
 from application.models import db,User,Role
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_cors import CORS
-
+from application.celery_init import celery_init_app
 def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///mydb.sqlite3"
@@ -26,6 +26,9 @@ def create_app():
 
 
 app = create_app()
+celery = celery_init_app(app)
+
+# celery worker command : celery -A app.celery worker --loglevel INFO
 
 from application.api import *
 from application.initial_data import *

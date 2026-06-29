@@ -1,6 +1,8 @@
 <template>
     <Navbar></Navbar>
-
+    <div class="d-flex justify-content-end">
+        <button class="btn btn-primary" @click="export_csv">Export CSV</button>
+    </div>
 
     <div class="card mt-5 ms-5 me-5">
         <div class="card-header">
@@ -86,7 +88,10 @@ export default {
     data() {
         return {
             bookings: null,
-            pack_list : null
+            pack_list : null,
+            task_id : null,
+            is_ready : false, 
+            interval_for_csv : null
 
         }
     },
@@ -94,6 +99,78 @@ export default {
         Navbar
     },
     methods: {
+        async export_csv() {
+            try {
+                const response = await fetch("http://localhost:5000/export-csv", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authentication-Token": localStorage.getItem("token")
+                    },
+
+
+                })
+                const data = await response.json()
+                if (response.status == 200) {
+                    this.task_id = data.task_id
+                    this.interval_for_csv = setInterval(() => {
+                        this.pollforcsv()
+                        console.log("polling")
+                    }, 2000);
+                }
+                else if (response.status == 401) {
+                    this.message = data.message
+                    this.$router.push("/login")
+                }
+                else if (response.status == 403) {
+                    this.message = data.message
+                    this.$router.push("/login")
+                }
+                else if (response.status == 404) {
+                    this.message = data.message
+                }
+            }
+            catch (error) {
+                console.log(error.message)
+            }
+        },
+        async pollforcsv() {
+            try {
+                const response = await fetch(`http://localhost:5000/result/${this.task_id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authentication-Token": localStorage.getItem("token")
+                    },
+
+
+                })
+                const data = await response.json()
+                if (response.status == 200) {
+                    if(data.ready){
+                        this.is_ready == true
+                        console.log(data.value)
+                        console.log("done!")
+                        clearInterval(this.interval_for_csv)
+                        window.location.href=`http://localhost:5000/static/${data.value}`
+                    }
+                }
+                else if (response.status == 401) {
+                    this.message = data.message
+                    this.$router.push("/login")
+                }
+                else if (response.status == 403) {
+                    this.message = data.message
+                    this.$router.push("/login")
+                }
+                else if (response.status == 404) {
+                    this.message = data.message
+                }
+            }
+            catch (error) {
+                console.log(error.message)
+            }
+        },
         async listPackages() {
             try {
                 const response = await fetch("http://localhost:5000/get-packages", {

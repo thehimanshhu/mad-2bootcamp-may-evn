@@ -211,3 +211,34 @@ def search():
             if query in cust.name.lower()  or query in cust.email.lower():
                 custs.append({ "id" : cust.id , "name" : cust.name , "email" : cust.email})
         return custs , 200
+
+
+from .task import add_together , export_csv
+
+@app.route("/add_number" , methods=["GET"])
+def add_num():
+    a = int(request.args.get("a"))
+    b = int(request.args.get("b"))
+    result = add_together.delay(a,b)
+    
+    return {"task_id" : result.id}
+
+
+from celery.result import AsyncResult
+
+@app.get("/result/<id>")
+def task_result(id: str) -> dict[str, object]:
+    result = AsyncResult(id)
+    return {
+        "ready": result.ready(),
+        "successful": result.successful(),
+        "value": result.result if result.ready() else None,
+    }
+
+
+@app.route("/export-csv" , methods=["GET"])
+@auth_required("token")
+@roles_required("customer")
+def export_customer_csv():
+    result = export_csv.delay(current_user.id)
+    return {"task_id" : result.id}
