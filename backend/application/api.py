@@ -3,6 +3,7 @@ from .models import db, User, Package, Booking, Role
 from flask import request
 from flask_security import auth_required, roles_required , current_user
 from datetime import datetime
+from app import cache
 @app.route("/")
 def home():
     return "Hello"
@@ -180,6 +181,7 @@ def book_package():
     
 
 @app.route("/get-bookings" , methods=["GET"]) 
+@cache.cached(1800)
 @auth_required("token")
 def get_bookings():
     bookings = Booking.query.filter_by(customer_id = current_user.id).all()
@@ -242,3 +244,9 @@ def task_result(id: str) -> dict[str, object]:
 def export_customer_csv():
     result = export_csv.delay(current_user.id)
     return {"task_id" : result.id}
+
+from random import randint 
+@app.route("/random")
+@cache.cached(30)
+def random():
+    return str(randint(1,100))

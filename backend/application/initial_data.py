@@ -65,6 +65,7 @@ with app.app_context():
     # print(booking3.professional.id)
     # print(booking3.professional.name)
     # print(booking3.package.name)
+    
 
 
     

@@ -24,3 +24,17 @@ def export_csv(cust_id):
                               booking.date, booking.time])
         
     return filename
+from datetime import datetime
+
+from .utils import preare_tmp
+from .mail import send_email
+
+@shared_task(name = "admin_monthly_report" , ignore_result=True)
+def admin_report():
+    start_date = datetime.strptime("01-06-2026" ,"%d-%m-%Y").date()
+    end_date= datetime.strptime("30-06-2026" ,"%d-%m-%Y").date()
+
+    bookings = db.session.query(Booking).filter(Booking.date.between(start_date,end_date)).all()
+    output = preare_tmp("./templates/admin-export-mail.html" , data= {"username" : "Admin" , "bookings" : bookings})
+    send_email("admin@gmail.com" , "Monthly Activity Report for Jun 2026" , output)
+    return "Done"

@@ -1,18 +1,59 @@
-# household service applciation 
+# HouseHold service app
+
+This is my MAD2 BOOTCAMP project
 
 
-# find a process running a port
-sudo lsof -i :<port>
 
-# stop process running at a port
-sudo kill <pid>
+# For Mailhog use commands from GSPACE
 
-# run redis server 
-redis-server
+# go to Backend (make sure the virtual env is activated)
+1. run python app
+    ```bash
+    python3 app.py
+    ```
+2. Install celery and Redis
+    ```bash
+    pip install celery[Redis]
+    ```
+3. Run radis server
 
-# if still doesn't wor
+    ```bash
+    redis-server
+    ```
+* if this says . already listining on port 6379.
+* run
+    ```bash
+    sudo lsof -i :6379
+    ```
+* check the process id and run
+    ```bash
+    sudo kill <pid>
+    ```
+* then retry
+    ```bash
+    redis-server
+    ```
+* if still give same error
+    ```bash
+    sudo systemctl stop redis
+    ```
+* then again try - this will definatly run the redis
+    ```bash
+    redis-server
+    ```
 
-sudo systemctl stop redis
+4. Open new terminal to run celery worker
 
-# running celery app
-celery -A app.celery worker -loglevel INFO
+    ```bash
+    celery -A app.celery worker --loglevel INFO
+    ```
+5. Open new terminal to run celery beat
+
+    ```bash
+    celery -A app.celery beat --loglevel INFO
+    ```
+6. Open new terminal to run mailhost
+
+    ```bash
+    MailHog
+    ```
